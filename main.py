@@ -12,7 +12,6 @@ lineRate = 10
 
 # ecpri data
 file_path = "iq_data.txt"  # Replace with the actual file path
-pcid = "04D2"  # Example value for the PCID
 
 # Create an instance of the FrameGenerator class
 frame_gen = FrameGenerator()
