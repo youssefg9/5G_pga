@@ -11,7 +11,7 @@ randomPayloadTotalSize = 1000
 lineRate = 10
 
 # ecpri data
-file_path = "iq_data.txt"  # Replace with the actual file path
+file_path = "iq_data.txt"  
 
 # Create an instance of the FrameGenerator class
 frame_gen = FrameGenerator()
