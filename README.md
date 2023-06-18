@@ -43,7 +43,7 @@ how to run the code:
 ## some therotical explanations and assumptions in the code:
 -------------------------------------------------------------
 
-Ethernet:
+### Ethernet:
 --------
 
 1-line rate = 10 Gbps (helps in converting stream/burst periods to bytes sized capacities)
@@ -72,25 +72,35 @@ By encapsulating the addresses within a class, it can provide a clear and organi
 -----------------------------------------------------------------------------------------------------------------------------
 -----------------------------------------------------------------------------------------------------------------------------
 
-eCPRI message:
+### eCPRI message:
 --------------
 eCPRI Message = Common Header + Payload
+-----------------------------------------------------------------------------------------------------------------------------
 Common Header = Protocol Revision (8 bits) + Reserved (8 bits) + C-Bit (1 bit) + Message Type (8 bits) + Payload Size (16 bits)
 Payload = Specific Payload
 -----------------------------------------------------------------------------------------------------------------------------
 The Common Header is the same for all eCPRI messages. It contains the following fields:
+-----------------------------------------------------------------------------------------------------------------------------
 -Protocol Revision: This field indicates the version of the eCPRI protocol.
+-----------------------------------------------------------------------------------------------------------------------------
 -Reserved: This field is reserved for future use.
+-----------------------------------------------------------------------------------------------------------------------------
 -C-Bit: This bit indicates whether the message is the first message in a sequence of eCPRI messages.
+-----------------------------------------------------------------------------------------------------------------------------
 -Message Type: This field indicates the type of the eCPRI message.
+-----------------------------------------------------------------------------------------------------------------------------
 -Payload Size: This field indicates the size of the payload in bytes.
+-----------------------------------------------------------------------------------------------------------------------------
 -The Payload is specific to the type of eCPRI message. For example, the payload for an eCPRI Message Type 0 message contains the following fields: PCID + Sequence ID + IQ Data
 -----------------------------------------------------------------------------------------------------------------------------
 
 Here is the structure of an eCPRI Message Type 0 format:
 eCPRI Message Type 0 = Common Header + PCID + Sequence ID + IQ Data
+-----------------------------------------------------------------------------------------------------------------------------
 -The PCID field is a 16-bit field that identifies the processing chain ID. 
+-----------------------------------------------------------------------------------------------------------------------------
 -The Sequence ID field is a 16-bit field that identifies the sequence number of the message. 
+-----------------------------------------------------------------------------------------------------------------------------
 -The IQ Data field is a variable-length field that contains the IQ data.
 -----------------------------------------------------------------------------------------------------------------------------
 The common header is only sent with the first message in a burst. This is because the common header contains information about the burst, such as the number of messages in the burst and the size of the payload. This information is only needed for the first message, so it is not sent with the subsequent messages in the burst.
