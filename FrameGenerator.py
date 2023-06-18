@@ -65,12 +65,7 @@ class FrameGenerator:
         #Ex::change the 1ms streaming duration to it’s equivalent number of bytes, and same for burst period
         #this needs the lineRate parameter for calculations
         
-        #for lineRate=10 Gbps , streamPeriod =1 ms
-        # 10*10^9 bits <----> 1 s
-        # 10*10^6 bits <----> 1 ms
-        
-        # If the total streaming duration has ended while a burst is being sent, the frames remaining should be discarded and IFGs are sent instead to fill 
-        #the remaining time period
+    
         # Calculate stream and burst capacities in bytes
         streamCapacity = lineRate * streamPeriod  
         burstCapacity = lineRate * burstPeriod
@@ -81,19 +76,7 @@ class FrameGenerator:
        
     #____If the period or the total streaming duration has ended while an ethernet packet is being generated, the packet should be discarded and IFGs are sent instead
         #If bursts to be interrupted due to end of streaming time, 
-        #Consider the following parameters:
-
-        #Line rate = 10 Gbps
-        #Total streaming duration: 47 us --> stream capacity=470 kb
-        #Burst period: 5 us --> burst capacity=50 kb
-        #frame period : 0.7us --> frames capacity = 7 kb
-        #Frames per burst: 5 
-        #In this scenario, Given that, in the last burst, the remaining streaming duration is 2us, so you can only transmit 2 frames worth 1.4us because the third frame would require 2.1us 
-        #or it terms of bytes , 20 Kb is remaining before end of stream period ,which allows only for 2 frames transmission worth 14 kb and the remaining 6 kb are sent as IFGs 
-
-        #Let's break down the transmissions within the 47 us stream period:
-        #-bursts from 0 - 9  (45 us duration) sent 450 kb frames
-        #-last burst: (2 us duration) sent 14 kb frames + 6 kb IFGs
+        
           
         dataLeftFromLastBurst=0.0
         lastBurstData=0.0
@@ -110,7 +93,7 @@ class FrameGenerator:
   #__________ check the size of data needed to be transmitted vs the MTU in 802.3 std = 1522 Bytes (1496 payload + 26 bytes overhead)__________
         #overhead given as Preamble: 8 bytes | Destination MAC address: 6 bytes | Source MAC address: 6 bytes | EtherType: 2 bytes | CRC (Cyclic Redundancy Check): 4 bytes 
         if(is_IQ_data):
-            payloadTotalSize=len(iq_payload)
+            payloadTotalSize=len(iq_payload)/2
 
         numOfSegments= math.ceil(payloadTotalSize/FrameSize)
         
@@ -119,11 +102,12 @@ class FrameGenerator:
             # Generate payload data
                 # Generate payload data
             if is_IQ_data:
-                if numOfSegments > 1:
-                    payloadData = iq_payload[:int(FrameSize) - 26]
-                    iq_payload = iq_payload[int(FrameSize) - 26:]  # Update iq_payload by removing the processed portion
-                else:
-                    payloadData = iq_payload
+                if is_IQ_data:
+                    if numOfSegments > 1:
+                        payloadData = iq_payload[:(int(FrameSize) - 26)*2]
+                        iq_payload = iq_payload[(int(FrameSize) - 26)*2:]  # Update iq_payload by removing the processed portion
+                    else:
+                        payloadData = iq_payload[:(int(FrameSize) - 26)*2]  # Subtract additional overhead for the last segment
             else:
                 if numOfSegments > 1:
                     payloadData = payload.pay_load_data(payloadChoice, (FrameSize - 26))
@@ -158,7 +142,7 @@ class FrameGenerator:
                 frameLen=FrameSize+int(ifgs)
                 ifgPadSize=0
                 if frameLen % 4 != 0:
-                    ifgPadSize = ifgPadSize + 4 -(frameLen % 4)
+                    ifgPadSize = (4 - (frameLen % 4)) % 4
                     ifgPadBytes = IFG.ifg_function(0, ifgPadSize)
                     totalIFGs=ifg_static+ifgPadBytes
                 else :
@@ -173,7 +157,7 @@ class FrameGenerator:
                 frameLen=FrameSize+int(ifgs)
                 ifgPadSize=0
                 if frameLen % 4 != 0:
-                    ifgPadSize= ifgPadSize + 4 -(frameLen % 4)
+                    ifgPadSize = (4 - (frameLen % 4)) % 4
                     ifgPadBytes = IFG.ifg_function(0, ifgPadSize)
                     totalIFGs=ifg_static+ifgPadBytes
                 else :
