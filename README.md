@@ -3,7 +3,7 @@ how to run the code:
 --------------------
 
  -----------------------------------------------------------------------------------------------------------------------------
-    1- _main.py_ is the function containing the needed classes and imports , it contains the following :
+    1- _main.py_ is the file containing the needed classes and imports , it contains the following :
     ----------------------------------------------------------------------------------------------------
     a-generatorFunc function of class FrameGenerator()
     IN  : 
